@@ -45,5 +45,5 @@ jobs:
           fi
       #Step 5: Run Unit test
       - name: Run tests
-        run: pytest
+        run: pytest test.py
 
