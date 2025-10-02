@@ -1,0 +1,49 @@
+# Run Unit tests on push
+name:
+  Test calc functions
+#event trigger
+on:
+  push:
+    branches: [main,dev]
+
+#single job
+jobs:
+  test:
+    # Run the job on the latest version of Ubuntu hosted by gitHub
+    runs-on: ubuntu-latest
+    steps:
+      #Step 1:print trigger event name using github context
+      - name: Trigger event
+        run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      #Step2: print runner os using runner context
+      - name: Runner OS
+        run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      #Step 3: print current branch github context
+      - name : Current branch name
+        run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      #Step 2: Checkout code from repository github context
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      #Step 3: Set up python environment
+      - name: Set up Python
+        # This is the version of the action for setting up Python, not the Python version.
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      #Step 4: Install Dependencies
+      - name: Install python dependencies
+        run: |
+          #Upgrade pip and install a test runner (like pytest)
+          python -m pip install --upgrade pip
+          pip install pytest
+          
+          #Check if requirements file exists and install dependencies from it
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+      #Step 5: Run Unit test
+      - name: Run tests
+        run: pytest
+
