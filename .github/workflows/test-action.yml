@@ -51,7 +51,7 @@ jobs:
           pytest test.py --junitxml=test-result/report.xml
       #Step 6:upload pytest result artifact
       - name: Upload pytest result artifact
-        uses: actions/upload-artifacts@v4
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-results
           path: test-results/report.xml
