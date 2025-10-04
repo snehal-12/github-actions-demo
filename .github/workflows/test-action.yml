@@ -34,6 +34,7 @@ jobs:
           python-version: 3.x
       #Step 4: Install Dependencies
       - name: Install python dependencies
+        #| allows you to execute four distinct shell commands all within one step.
         run: |
           #Upgrade pip and install a test runner (like pytest)
           python -m pip install --upgrade pip
@@ -43,7 +44,40 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
-      #Step 5: Run Unit test
+      #Step 5: Run Unit test and save results to JUnit format
       - name: Run tests
-        run: pytest test.py
+        run: |
+          mkdir -p test-result
+          pytest test.py --junitxml=test-result/report.xml
+      #Step 6:upload pytest result artifact
+      - name: Upload pytest result artifact
+        uses: actions/upload-artifacts@v4
+        with:
+          name: pytest-results
+          path: test-results/report.xml
+          retention-days: 1
+  #job 2
+  read-result:
+    # Ensure this job only runs AFTER the 'test' job succeeds
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      #Step1
+      - name: Download pytest results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pytest-results
+          path: downloaded-results
+
+     #Step2:
+      - name: Display artifact content
+        run: |
+          echo "Test results downloaded successfully:"
+          # Use 'cat' to print the content of the XML report file to the job log
+          cat downloaded-results/report.xml
+          
+
+
+
+
 
